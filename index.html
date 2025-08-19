@@ -4,46 +4,63 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Torneo Básquet — Jerárquicos</title>
-<link rel="preconnect" href="https://fonts.gstatic.com">
 <style>
 :root{
   --bg:#041028; --panel:#07172a; --card:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-  --accent:#1e90ff; --accent-2:#f59e0b; --muted:#9fb0c6; --text:#eaf2ff; --glass:rgba(255,255,255,0.03);
+  --accent:#1e90ff; --accent-2:#f59e0b; --muted:#9fb0c6; --text:#eaf2ff;
+  --green:#0f5132; --green-2:#1f7a4f;
 }
 *{box-sizing:border-box}
-body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gradient(180deg,#041028 0%, #02243a 100%);color:var(--text);-webkit-font-smoothing:antialiased}
-.app{max-width:1180px;margin:14px auto;padding:12px}
+body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gradient(180deg,#041028,#02243a);color:var(--text);-webkit-font-smoothing:antialiased}
+.app{max-width:1200px;margin:14px auto;padding:12px}
 .header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
 .brand{display:flex;align-items:center;gap:12px}
 .logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,#072033,#0b3a56);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px}
-.title{line-height:1}
 .title h1{margin:0;font-size:18px}
 .title p{margin:2px 0 0;color:var(--muted);font-size:13px}
 .controls{margin-left:auto;display:flex;gap:8px;align-items:center}
 .input{padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text);min-width:260px}
 .btn{background:var(--accent);color:#021028;border:0;padding:8px 12px;border-radius:10px;font-weight:700;cursor:pointer}
 .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--text)}
-.btn.alt{background:var(--accent-2);color:#021028}
-.layout{display:grid;grid-template-columns:260px 1fr;gap:12px}
-@media(max-width:880px){ .layout{grid-template-columns:1fr} .sidebar{order:2} .main{order:1} .controls .input{min-width:140px} }
+
+.layout{display:grid;grid-template-columns:260px 1fr;gap:12px;align-items:start}
+@media(max-width:880px){ .layout{grid-template-columns:1fr} .sidebar{order:2} .main{order:1} .topnav{display:flex} .leftnav{display:none} .controls .input{min-width:140px} }
+
 .sidebar{background:var(--panel);padding:12px;border-radius:12px;min-height:360px}
+.leftnav{display:block}
+.topnav{display:none;padding:6px 0;margin-bottom:8px;gap:6px}
+.topnav button{flex:1;padding:8px;border-radius:8px;border:0;background:transparent;color:var(--text);font-weight:700}
 .nav-btn{display:flex;align-items:center;gap:10px;width:100%;padding:10px;border-radius:8px;border:0;background:transparent;color:var(--text);text-align:left;margin-bottom:8px;cursor:pointer;font-weight:600}
 .nav-btn.active{background:linear-gradient(90deg,var(--accent),#60a5fa);color:#021028}
-.section-title{font-size:13px;color:var(--muted);margin-top:8px;margin-bottom:6px}
+
 .card{background:var(--card);padding:12px;border-radius:12px;margin-bottom:12px;box-shadow:0 6px 20px rgba(2,6,12,0.4)}
-.status-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
 .small{font-size:13px;color:var(--muted)}
+.status-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+
+/* table */
 .table{width:100%;border-collapse:collapse}
 .table th,.table td{padding:10px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:left}
 .table th{font-size:12px;color:var(--muted)}
 .table tbody tr:nth-child(odd){background:rgba(255,255,255,0.01)}
-.badge{width:36px;height:36px;border-radius:8px;background:#012233;display:inline-flex;align-items:center;justify-content:center;font-weight:800}
-.fixture-row{display:flex;align-items:center;justify-content:space-between;padding:10px;border-radius:8px;background:transparent;margin-bottom:8px}
-.meta{color:var(--muted);font-size:13px}
-.playoff-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-@media(min-width:900px){ .playoff-grid{grid-template-columns:repeat(4,1fr)} }
-.footer{margin-top:8px;color:var(--muted);font-size:13px;text-align:center}
-.toast{position:fixed;right:18px;bottom:18px;background:rgba(0,0,0,0.7);color:white;padding:8px 12px;border-radius:8px}
+
+/* fixture */
+.jornada-nav{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.jornada-btn{padding:8px 10px;border-radius:8px;border:0;background:transparent;color:var(--text);cursor:pointer}
+.jornada-btn.active{background:rgba(255,255,255,0.03)}
+
+/* bracket */
+.bracket{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start}
+.column{background:rgba(255,255,255,0.01);padding:10px;border-radius:10px}
+.match{background:linear-gradient(180deg,var(--green),var(--green-2));color:white;padding:8px;border-radius:8px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;opacity:0;transform:translateY(6px)}
+
+/* animations */
+.fade-in{animation:fadeIn .28s ease forwards}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.slide-left{animation:slideLeft .28s ease forwards}
+@keyframes slideLeft{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:translateX(0)}}
+
+@media(max-width:540px){ .controls{flex-wrap:wrap;gap:6px} .input{min-width:120px} .bracket{grid-template-columns:1fr} }
+.toast{position:fixed;right:18px;bottom:18px;background:rgba(0,0,0,0.7);color:white;padding:8px 12px;border-radius:8px;display:none}
 </style>
 </head>
 <body>
@@ -53,83 +70,68 @@ body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gra
         <div class="logo">BB</div>
         <div class="title">
           <h1>TORNEO BÁSQUET — JERÁRQUICOS</h1>
-          <p>Ver resultados · Fixture · Tabla de posiciones · Playoffs</p>
+          <p>Resultados · Fixture · Tabla · Playoffs</p>
         </div>
       </div>
-
       <div class="controls">
         <input id="csvUrl" class="input" type="text" placeholder="CSV pública (publicar → CSV)"/>
         <button id="saveCsv" class="btn ghost">Guardar URL</button>
         <button id="updateBtn" class="btn">🔄 Actualizar</button>
-        <button id="downloadBtn" class="btn alt">⬇️ Descargar CSV</button>
+        <label style="color:var(--muted);margin-left:8px"><input id="autoRefresh" type="checkbox" /> Auto-refresh</label>
       </div>
     </header>
 
     <div class="layout">
       <aside class="sidebar">
-        <div class="section-title">Navegación</div>
-        <button class="nav-btn active" data-tab="pos">🏆 Tabla de Posiciones</button>
-        <button class="nav-btn" data-tab="fixture">📅 Fixture</button>
-        <button class="nav-btn" data-tab="playoffs">⚔️ Playoffs</button>
-        <button class="nav-btn" data-tab="goleadores">🔥 Goleadores</button>
-        <button class="nav-btn" data-tab="ingresar">✍️ Ingresar Resultados</button>
-
-        <div class="section-title">Estado</div>
-        <div class="card">
-          <div class="status-row">
-            <div id="statMsg" class="small">Estado: sin cargar</div>
-            <div id="lastUpdated" class="small">Última: —</div>
-          </div>
-          <div style="margin-top:8px" class="small">Auto-refresh:
-            <label style="margin-left:8px"><input id="autoRefresh" type="checkbox"/> 30s</label>
-          </div>
-        </div>
-
-        <div class="section-title">Instrucciones</div>
-        <div class="card small">
-          • Publicá la hoja → CSV. <br>
-          • Compartí permiso Editor solo a los 1–3 editores. <br>
-          • Si no ves datos, probá en incógnito o pulsá Actualizar.
+        <div class="leftnav">
+          <div class="small" style="margin-bottom:8px">Navegación</div>
+          <button class="nav-btn active" data-tab="pos">🏆 Tabla de Posiciones</button>
+          <button class="nav-btn" data-tab="fixture">📅 Fixture</button>
+          <button class="nav-btn" data-tab="playoffs">⚔️ Playoffs</button>
+          <button class="nav-btn" data-tab="goleadores">🔥 Goleadores</button>
         </div>
       </aside>
 
       <main class="main">
+        <div class="topnav" style="display:none;gap:6px;margin-bottom:12px">
+          <button data-tab="pos">🏆 Tabla</button>
+          <button data-tab="fixture">📅 Fixture</button>
+          <button data-tab="playoffs">⚔️ Playoffs</button>
+          <button data-tab="goleadores">🔥 Goleadores</button>
+        </div>
+
         <section id="pos" class="card" style="display:block">
           <h3>🏆 Tabla de Posiciones</h3>
-          <div id="standingsTable" style="margin-top:8px"></div>
+          <div id="standingsTable" style="margin-top:8px" class="fade-in"></div>
         </section>
 
         <section id="fixture" class="card" style="display:none">
-          <h3>📅 Fixture / Resultados</h3>
-          <div id="fixtureList" style="margin-top:8px"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+            <h3 style="margin:0">📅 Fixture / Resultados</h3>
+            <div>
+              <button id="prevJ" class="jornada-btn">◀</button>
+              <select id="jornadaSelect" class="jornada-btn"></select>
+              <button id="nextJ" class="jornada-btn">▶</button>
+            </div>
+          </div>
+          <div id="fixtureList" style="margin-top:6px" class="slide-left"></div>
         </section>
 
         <section id="playoffs" class="card" style="display:none">
           <h3>⚔️ Playoffs (Top 8)</h3>
-          <div id="playoffBox" class="playoff-grid" style="margin-top:8px"></div>
+          <div id="bracket" class="bracket" style="margin-top:10px"></div>
+          <div class="small" style="margin-top:10px">Para automatizar: añadí en la hoja filas de playoff con columna `fase` (ej. QF1,QF2.. SF1,SF2,FINAL) o usá jornadas >=100. Rellená scores y la app completará etapas.</div>
         </section>
 
         <section id="goleadores" class="card" style="display:none">
           <h3>🔥 Tabla de Goleadores</h3>
-          <div id="goleadoresBox" style="margin-top:8px"></div>
+          <div id="goleadoresBox" style="margin-top:8px" class="fade-in"></div>
         </section>
-
-        <section id="ingresar" class="card" style="display:none">
-          <h3>✍️ Ingresar Resultados</h3>
-          <div class="small" style="margin-bottom:8px">Edición por Google Sheets. Solo editores pueden modificar. Si querés edición desde la web, lo integramos con Firebase más adelante.</div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button id="openSheet" class="btn ghost">Abrir hoja (editor)</button>
-            <button id="forceReload" class="btn">Forzar recarga</button>
-            <button id="clearSaved" class="btn ghost">Borrar URL guardada</button>
-          </div>
-        </section>
-
-        <div class="footer">App pro: datos en Google Sheets · Compartí el link por WhatsApp / Instagram</div>
       </main>
     </div>
   </div>
 
-  <div id="toast" class="toast" style="display:none"></div>
+  <div id="toast" class="toast"></div>
 
 <script>
 (function(){
@@ -138,23 +140,19 @@ body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gra
   const csvInput = document.getElementById('csvUrl');
   const saveBtn = document.getElementById('saveCsv');
   const updateBtn = document.getElementById('updateBtn');
-  const downloadBtn = document.getElementById('downloadBtn');
   const autoCheck = document.getElementById('autoRefresh');
-  const statMsg = document.getElementById('statMsg');
-  const lastUpdated = document.getElementById('lastUpdated');
   const toastEl = document.getElementById('toast');
-  const openSheetBtn = document.getElementById('openSheet');
-  const clearSavedBtn = document.getElementById('clearSaved');
-  const forceReloadBtn = document.getElementById('forceReload');
 
   let latestMatches = [];
+  let jornadasSorted = [];
+  let currentJornada = null;
   let autoTimer = null;
 
-  function toast(msg, t=1500){ toastEl.textContent = msg; toastEl.style.display='block'; setTimeout(()=> toastEl.style.display='none', t); }
+  function toast(msg, t=1300){ toastEl.textContent = msg; toastEl.style.display='block'; setTimeout(()=> toastEl.style.display='none', t); }
 
   function parseCSV(text){
     const rows=[]; let cur=''; let row=[]; let inQ=false;
-    for (let i=0;i<text.length;i++){ const ch=text[i];
+    for (let i=0;i<text.length;i++){ const ch = text[i];
       if (ch === '"'){ if (inQ && text[i+1]==='"'){ cur+='"'; i++; continue } inQ = !inQ; continue; }
       if (!inQ && (ch===',' || ch==='\n' || ch==='\r')){ row.push(cur); cur=''; if (ch==='\r' && text[i+1]==='\n'){ i++; rows.push(row); row=[]; continue } if (ch==='\n' || ch==='\r'){ rows.push(row); row=[]; continue } continue; }
       cur += ch;
@@ -166,8 +164,6 @@ body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gra
 
   function loadSaved(){ const v = localStorage.getItem(STORAGE_KEY); if (v) csvInput.value = v; return v; }
   function saveUrl(v){ localStorage.setItem(STORAGE_KEY, v); csvInput.value = v; toast('URL guardada'); }
-  function clearSaved(){ localStorage.removeItem(STORAGE_KEY); csvInput.value = ''; toast('URL eliminada'); }
-
   saveBtn.addEventListener('click', ()=> {
     const v = csvInput.value.trim();
     if (!v) return toast('Pega URL pública CSV');
@@ -178,25 +174,6 @@ body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gra
     const url = csvInput.value.trim() || loadSaved() || DEFAULT_CSV;
     if (!url) return toast('No hay URL CSV configurada');
     fetchAndRender(url);
-  });
-
-  downloadBtn.addEventListener('click', ()=> {
-    if (!latestMatches || !latestMatches.length) return toast('No hay datos para descargar');
-    const headers = ['id','jornada','equipo_local','equipo_visita','score_local','score_visita','estado','cancha','fecha','hora','goleadores_local','goleadores_visita'];
-    const lines = [headers.join(',')];
-    for (const m of latestMatches){
-      const cols = headers.map(h=> {
-        let v = m[h] ?? '';
-        v = String(v);
-        if (v.includes('"')) v = v.replace(/"/g,'""');
-        if (v.includes(',') || v.includes('"') || v.includes('\n')) v = `"${v}"`;
-        return v;
-      });
-      lines.push(cols.join(','));
-    }
-    const blob = new Blob([lines.join('\n')], { type:'text/csv' });
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'matches_export.csv'; a.click(); URL.revokeObjectURL(a.href);
-    toast('CSV descargado');
   });
 
   autoCheck.addEventListener('change', ()=> {
@@ -210,13 +187,9 @@ body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gra
       const url = csvInput.value.trim() || loadSaved() || DEFAULT_CSV;
       if (url) fetchAndRender(url);
     }, sec*1000);
-    toast('Auto-refresh activado');
+    toast('Auto-refresh ON');
   }
-  function stopAutoRefresh(){ if (autoTimer) clearInterval(autoTimer); autoTimer = null; toast('Auto-refresh detenido'); }
-
-  function getCsvParam(){
-    try{ const params = new URLSearchParams(window.location.search); const csvParam = params.get('csv'); return csvParam ? decodeURIComponent(csvParam) : null; } catch(e){ return null; }
-  }
+  function stopAutoRefresh(){ if (autoTimer) clearInterval(autoTimer); autoTimer = null; toast('Auto-refresh OFF'); }
 
   function sanitizeTail(rawUrl){
     const urlBase = rawUrl.split('?')[0];
@@ -227,10 +200,10 @@ body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gra
 
   async function fetchAndRender(rawUrl){
     const url = sanitizeTail(rawUrl);
-    statMsg.textContent = 'Estado: cargando...';
+    toast('Cargando...');
     try{
       const res = await fetch(url, {cache:'no-store'});
-      if (!res.ok) throw new Error('HTTP '+res.status);
+      if (!res.ok) throw new Error('HTTP ' + res.status);
       const text = await res.text();
       if (!text || text.trim().length === 0) throw new Error('CSV vacío');
       const rows = parseCSV(text);
@@ -241,28 +214,27 @@ body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gra
         obj.jornada = obj.jornada ? Number(obj.jornada) : null;
         obj.score_local = obj.score_local === '' ? null : (isNaN(Number(obj.score_local)) ? obj.score_local : Number(obj.score_local));
         obj.score_visita = obj.score_visita === '' ? null : (isNaN(Number(obj.score_visita)) ? obj.score_visita : Number(obj.score_visita));
+        obj.fase = obj.fase ? obj.fase.trim().toUpperCase() : '';
         obj.estado = obj.estado ? obj.estado : (obj.score_local != null && obj.score_visita != null ? 'finalizado' : 'programado');
         return obj;
       });
       latestMatches = data;
       renderAll(data);
-      lastUpdated.textContent = 'Última: ' + (new Date()).toLocaleString();
-      statMsg.textContent = 'Estado: cargado';
+      toast('Listo',800);
     }catch(err){
-      statMsg.textContent = 'Estado: error';
-      toast('Error: ' + err.message, 4000);
       console.error(err);
+      toast('Error: ' + err.message,4000);
     }
   }
 
   function aggregateStandings(matches){
     const map={};
     for (const m of matches){
-      const a = (m.equipo_local||'').trim(), b=(m.equipo_visita||'').trim();
-      if (!a||!b) continue;
+      const a=(m.equipo_local||'').trim(), b=(m.equipo_visita||'').trim();
+      if (!a || !b) continue;
       if (!map[a]) map[a]={nombre:a,PJ:0,PG:0,PP:0,PF:0,PC:0};
       if (!map[b]) map[b]={nombre:b,PJ:0,PG:0,PP:0,PF:0,PC:0};
-      if (m.score_local==null||m.score_visita==null) continue;
+      if (m.score_local==null || m.score_visita==null) continue;
       const la=Number(m.score_local), lb=Number(m.score_visita);
       if (!Number.isFinite(la)||!Number.isFinite(lb)) continue;
       map[a].PJ++; map[b].PJ++;
@@ -279,7 +251,7 @@ body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gra
     const s = aggregateStandings(matches);
     const container = document.getElementById('standingsTable'); container.innerHTML = '';
     if (!s.length){ container.innerHTML = '<div class="small">No hay datos</div>'; return; }
-    const table = document.createElement('table'); table.className='table';
+    const table = document.createElement('table'); table.className='table fade-in';
     const thead = document.createElement('thead'); thead.innerHTML = '<tr><th>Pos</th><th>Equipo</th><th>PJ</th><th>PG</th><th>PP</th><th>PF</th><th>PC</th><th>DF</th><th>PTS</th></tr>';
     table.appendChild(thead);
     const tbody = document.createElement('tbody');
@@ -289,46 +261,126 @@ body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gra
       tr.innerHTML = `<td>${r.pos}</td><td>${r.nombre}</td><td style="text-align:center">${r.PJ}</td><td style="text-align:center">${r.PG}</td><td style="text-align:center">${r.PP}</td><td style="text-align:center">${r.PF}</td><td style="text-align:center">${r.PC}</td><td style="text-align:center">${r.DF}</td><td style="text-align:center;font-weight:800">${r.PTS}</td>`;
       tbody.appendChild(tr);
     }
-    table.appendChild(tbody);
-    container.appendChild(table);
+    table.appendChild(tbody); container.appendChild(table);
+  }
+
+  function setupJornadas(matches){
+    jornadasSorted = [...new Set(matches.map(m=>m.jornada).filter(v=>v!=null))].sort((a,b)=>a-b);
+    const sel = document.getElementById('jornadaSelect');
+    sel.innerHTML = '';
+    jornadasSorted.forEach(j => {
+      const o = document.createElement('option'); o.value = j; o.textContent = 'Jornada ' + j; sel.appendChild(o);
+    });
+    if (jornadasSorted.length) currentJornada = jornadasSorted[0];
+    sel.addEventListener('change', ()=> { currentJornada = Number(sel.value); renderFixture(latestMatches); });
+    document.getElementById('prevJ').addEventListener('click', ()=>{
+      if (!jornadasSorted.length) return;
+      const idx = jornadasSorted.indexOf(currentJornada);
+      if (idx > 0) currentJornada = jornadasSorted[idx-1];
+      sel.value = currentJornada; renderFixture(latestMatches);
+    });
+    document.getElementById('nextJ').addEventListener('click', ()=>{
+      if (!jornadasSorted.length) return;
+      const idx = jornadasSorted.indexOf(currentJornada);
+      if (idx < jornadasSorted.length - 1) currentJornada = jornadasSorted[idx+1];
+      sel.value = currentJornada; renderFixture(latestMatches);
+    });
   }
 
   function renderFixture(matches){
+    setupJornadas(matches);
     const container = document.getElementById('fixtureList'); container.innerHTML = '';
-    const jornadas = [...new Set(matches.map(m=>m.jornada).filter(v=>v!=null))].sort((a,b)=>a-b);
-    if (!jornadas.length){ container.innerHTML = '<div class="small">No hay partidos definidos.</div>'; return; }
-    for (const j of jornadas){
-      const block = document.createElement('div'); block.style.marginBottom='10px';
-      const hdr = document.createElement('div'); hdr.style.display='flex'; hdr.style.justifyContent='space-between'; hdr.innerHTML = `<strong>Jornada ${j}</strong><span class="small">${matches.filter(m=>m.jornada===j).length} partidos</span>`;
-      block.appendChild(hdr);
-      for (const m of matches.filter(x=>x.jornada===j)){
-        const row = document.createElement('div'); row.className='fixture-row';
-        const left = document.createElement('div'); left.innerHTML = `<div style="display:flex;align-items:center;gap:8px"><div class="badge">${initials(m.equipo_local)}</div><div>${m.equipo_local||'TBD'}</div></div>`;
-        const center = document.createElement('div'); center.innerHTML = `<strong>${m.score_local!=null?m.score_local:'-'} — ${m.score_visita!=null?m.score_visita:'-'}</strong>`;
-        const right = document.createElement('div'); right.innerHTML = `<div style="min-width:140px">${m.equipo_visita||'TBD'}<div class="meta">${m.cancha?m.cancha+' · ':''}${m.fecha?m.fecha+' ':''}${m.hora?m.hora:''}</div></div>`;
-        row.appendChild(left); row.appendChild(center); row.appendChild(right);
-        block.appendChild(row);
-      }
-      container.appendChild(block);
+    if (!currentJornada){ container.innerHTML = '<div class="small">No hay jornadas definidas.</div>'; return; }
+    const block = document.createElement('div'); block.className='fade-in';
+    const hdr = document.createElement('div'); hdr.style.display='flex'; hdr.style.justifyContent='space-between'; hdr.style.alignItems='center';
+    hdr.innerHTML = `<strong>Jornada ${currentJornada}</strong><span class="small">${matches.filter(m=>m.jornada===currentJornada).length} partidos</span>`;
+    block.appendChild(hdr);
+    for (const m of matches.filter(x=>x.jornada===currentJornada)){
+      const row = document.createElement('div'); row.style.display='flex'; row.style.justifyContent='space-between'; row.style.padding='10px 6px';
+      const left = document.createElement('div'); left.innerHTML = `<div style="font-weight:700">${m.equipo_local||'TBD'}</div>`;
+      const center = document.createElement('div'); center.innerHTML = `<strong>${m.score_local!=null?m.score_local:'-'} — ${m.score_visita!=null?m.score_visita:'-'}</strong>`;
+      const right = document.createElement('div'); right.innerHTML = `<div style="font-weight:700">${m.equipo_visita||'TBD'}</div><div class="small" style="color:var(--muted)">${m.cancha?m.cancha+' · ':''}${m.fecha?m.fecha+' ':''}${m.hora?m.hora:''}</div>`;
+      row.appendChild(left); row.appendChild(center); row.appendChild(right);
+      block.appendChild(row);
     }
+    container.appendChild(block);
   }
 
-  function initials(name){ if(!name) return ''; return name.split(' ').map(w=>w[0]||'').slice(0,2).join('').toUpperCase(); }
-
-  function buildPlayoffs(matches){
-    const top = aggregateStandings(matches).slice(0,8);
-    const pairs = [[1,8],[4,5],[3,6],[2,7]];
-    return pairs.map((p,i)=>({match:i+1,home:top[p[0]-1]||null,away:top[p[1]-1]||null}));
+  function winnerFromMatch(m){
+    if (!m || m.score_local==null || m.score_visita==null) return null;
+    return m.score_local > m.score_visita ? m.equipo_local : (m.score_visita > m.score_local ? m.equipo_visita : 'EMPATE');
   }
 
-  function renderPlayoffs(matches){
-    const box = document.getElementById('playoffBox'); box.innerHTML = '';
-    const data = buildPlayoffs(matches);
-    if (!data.length){ box.innerHTML = '<div class="small">No hay suficientes equipos para playoffs</div>'; return; }
-    for (const b of data){
-      const el = document.createElement('div'); el.style.padding='10px'; el.style.borderRadius='8px'; el.style.background='rgba(255,255,255,0.01)';
-      el.innerHTML = `<div class="small">QF ${b.match}</div><div style="font-weight:700">${b.home?b.home.nombre:'TBD'}</div><div class="small muted">vs</div><div style="font-weight:700">${b.away?b.away.nombre:'TBD'}</div>`;
-      box.appendChild(el);
+  function renderBracket(matches){
+    const colQf = document.getElementById('bracket').children[0] || document.createElement('div');
+    document.getElementById('bracket').innerHTML = '<div class="column" id="col-qf"></div><div class="column" id="col-sf"></div><div class="column" id="col-final"></div>';
+    const colQ = document.getElementById('col-qf'), colS = document.getElementById('col-sf'), colF = document.getElementById('col-final');
+
+    const stand = aggregateStandings(matches).slice(0,8);
+    const explicitQF = matches.filter(m=>m.fase && m.fase.startsWith('QF')).sort((a,b)=>a.fase.localeCompare(b.fase));
+    const explicitSF = matches.filter(m=>m.fase && m.fase.startsWith('SF')).sort((a,b)=>a.fase.localeCompare(b.fase));
+    const explicitFinal = matches.filter(m=>m.fase && (m.fase==='FINAL' || m.fase==='F')).sort((a,b)=>a.id - b.id);
+
+    if (!stand.length && !explicitQF.length){ colQ.innerHTML = '<div class="small">No hay equipos suficientes</div>'; return; }
+
+    const pairsAuto = [
+      [stand[0]||null, stand[7]||null],
+      [stand[3]||null, stand[4]||null],
+      [stand[2]||null, stand[5]||null],
+      [stand[1]||null, stand[6]||null]
+    ];
+
+    // QF: use explicit rows if present, otherwise auto pairs
+    const qfToRender = explicitQF.length ? explicitQF : pairsAuto.map((p,i)=>({fase:'QF'+(i+1), equipo_local: p[0]?p[0].nombre:'', equipo_visita: p[1]?p[1].nombre:''}));
+
+    qfToRender.forEach((q,i)=>{
+      const el = document.createElement('div'); el.className='match fade-in';
+      let left = q.equipo_local || '';
+      let right = q.equipo_visita || '';
+      if (!left && !right && pairsAuto[i]){ left = pairsAuto[i][0] ? pairsAuto[i][0].nombre : 'TBD'; right = pairsAuto[i][1] ? pairsAuto[i][1].nombre : 'TBD'; }
+      const score = (q.score_local!=null && q.score_visita!=null) ? `${q.score_local} — ${q.score_visita}` : '—';
+      el.innerHTML = `<div style="font-weight:700">${left}</div><div class="small">${score}</div><div style="font-weight:700">${right}</div>`;
+      colQ.appendChild(el);
+    });
+
+    // SF placeholders or explicit
+    const sfToRender = explicitSF.length ? explicitSF : [{fase:'SF1'},{fase:'SF2'}];
+    sfToRender.forEach((s,i)=>{
+      const el = document.createElement('div'); el.className='match fade-in';
+      let left = s.equipo_local || 'A confirmar', right = s.equipo_visita || 'A confirmar';
+      const score = (s.score_local!=null && s.score_visita!=null) ? `${s.score_local} — ${s.score_visita}` : '—';
+      el.innerHTML = `<div style="font-weight:700">${left}</div><div class="small">${score}</div><div style="font-weight:700">${right}</div>`;
+      colS.appendChild(el);
+    });
+
+    // FINAL placeholder / explicit
+    const finalToRender = explicitFinal.length ? explicitFinal[0] : {fase:'FINAL'};
+    const fEl = document.createElement('div'); fEl.className='match fade-in';
+    const fLeft = finalToRender.equipo_local || 'A confirmar', fRight = finalToRender.equipo_visita || 'A confirmar';
+    const fScore = (finalToRender.score_local!=null && finalToRender.score_visita!=null) ? `${finalToRender.score_local} — ${finalToRender.score_visita}` : '—';
+    fEl.innerHTML = `<div style="font-weight:700">${fLeft}</div><div class="small">${fScore}</div><div style="font-weight:700">${fRight}</div>`;
+    colF.appendChild(fEl);
+
+    // If explicit QF present and winners can be determined, auto-fill SF placeholders
+    if (explicitQF.length){
+      const qWinners = explicitQF.map(m => winnerFromMatch(m));
+      if (qWinners.filter(Boolean).length >= 2){
+        // map winners to SF: QF1 vs QF2 -> SF1 ; QF3 vs QF4 -> SF2
+        const sf1left = qWinners[0] || 'A confirmar', sf1right = qWinners[1] || 'A confirmar';
+        const sf2left = qWinners[2] || 'A confirmar', sf2right = qWinners[3] || 'A confirmar';
+        colS.innerHTML = '';
+        [ [sf1left,sf1right], [sf2left,sf2right] ].forEach(p=>{
+          const el = document.createElement('div'); el.className='match fade-in'; el.innerHTML = `<div style="font-weight:700">${p[0]}</div><div class="small">—</div><div style="font-weight:700">${p[1]}</div>`; colS.appendChild(el);
+        });
+      }
+      // if SF explicit present and have winners, fill final
+      if (explicitSF.length){
+        const sfW = explicitSF.map(m=> winnerFromMatch(m));
+        if (sfW.filter(Boolean).length === 2){
+          colF.innerHTML = '';
+          const el2 = document.createElement('div'); el2.className='match fade-in'; el2.innerHTML = `<div style="font-weight:700">${sfW[0]}</div><div class="small">—</div><div style="font-weight:700">${sfW[1]}</div>`; colF.appendChild(el2);
+        }
+      }
     }
   }
 
@@ -339,7 +391,6 @@ body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gra
       return { name: name||'', pts: pts ? Number(pts) : 0 };
     });
   }
-
   function renderGoleadores(matches){
     const box = document.getElementById('goleadoresBox'); box.innerHTML = '';
     const tally = {};
@@ -350,7 +401,7 @@ body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gra
     }
     const arr = Object.keys(tally).map(n=>({nombre:n,pts:tally[n]})).sort((a,b)=>b.pts - a.pts || a.nombre.localeCompare(b.nombre));
     if (!arr.length){ box.innerHTML = '<div class="small">Aún no hay datos de goleadores.</div>'; return; }
-    const table = document.createElement('table'); table.className='table';
+    const table = document.createElement('table'); table.className='table fade-in';
     table.innerHTML = '<thead><tr><th>#</th><th>Jugador</th><th>Puntos</th></tr></thead>';
     const tbody = document.createElement('tbody');
     arr.forEach((r,i)=>{ const tr=document.createElement('tr'); tr.innerHTML = `<td>${i+1}</td><td>${r.nombre}</td><td style="text-align:right">${r.pts}</td>`; tbody.appendChild(tr); });
@@ -360,41 +411,37 @@ body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gra
   function renderAll(matches){
     renderStandings(matches);
     renderFixture(matches);
-    renderPlayoffs(matches);
+    renderBracket(matches);
     renderGoleadores(matches);
   }
 
-  function init(){
+  const navBtns = document.querySelectorAll('.nav-btn');
+  navBtns.forEach(b=> b.addEventListener('click', e=>{
+    navBtns.forEach(x=>x.classList.remove('active')); e.currentTarget.classList.add('active');
+    const tab = e.currentTarget.getAttribute('data-tab');
+    document.querySelectorAll('main section').forEach(s=>s.style.display='none');
+    document.getElementById(tab).style.display='block';
+  }));
+  const topNavBtns = document.querySelectorAll('.topnav button');
+  topNavBtns.forEach(b=> b.addEventListener('click', e=>{ document.querySelectorAll('main section').forEach(s=>s.style.display='none'); document.getElementById(e.currentTarget.getAttribute('data-tab')).style.display='block'; }));
+
+  function getCsvParam(){ try{ const params = new URLSearchParams(window.location.search); const csvParam = params.get('csv'); return csvParam ? decodeURIComponent(csvParam) : null; } catch(e){ return null; } }
+  (function init(){
     const param = getCsvParam();
-    if (param){ let dec = param; try { dec = decodeURIComponent(param); } catch(e){} saveUrl(dec); fetchAndRender(dec); }
+    if (param){ let dec = param; try{ dec = decodeURIComponent(param);}catch(e){} saveUrl(dec); fetchAndRender(dec); }
     else {
       const s = loadSaved();
       if (s) fetchAndRender(s);
       else if (DEFAULT_CSV) { saveUrl(DEFAULT_CSV); fetchAndRender(DEFAULT_CSV); }
     }
-  }
+    // auto-refresh ON by default
+    document.getElementById('autoRefresh').checked = true;
+    startAutoRefresh(30);
+    // mobile nav show
+    if (window.innerWidth <= 880) document.querySelector('.topnav').style.display = 'flex';
+  })();
 
-  openSheetBtn.addEventListener('click', ()=> {
-    const url = csvInput.value.trim() || loadSaved() || DEFAULT_CSV;
-    const editUrl = url.replace('/pub?','/edit?');
-    window.open(editUrl,'_blank');
-  });
-
-  clearSavedBtn.addEventListener('click', ()=> clearSaved());
-  forceReloadBtn.addEventListener('click', ()=> { const url = csvInput.value.trim() || loadSaved() || DEFAULT_CSV; if (url) fetchAndRender(url); });
-
-  document.querySelectorAll('.nav-btn').forEach(b=>{
-    b.addEventListener('click', (e)=> {
-      document.querySelectorAll('.nav-btn').forEach(x=>x.classList.remove('active'));
-      e.currentTarget.classList.add('active');
-      const tab = e.currentTarget.getAttribute('data-tab');
-      document.querySelectorAll('main section').forEach(s=>s.style.display='none');
-      document.getElementById(tab).style.display='block';
-    });
-  });
-
-  init();
-  window.torneo = { fetchAndRender, renderAll };
+  window.torneo = { fetchAndRender };
 })();
 </script>
 </body>
