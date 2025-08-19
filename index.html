@@ -8,7 +8,7 @@
 :root{
   --bg:#041028; --panel:#07172a; --card:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
   --accent:#1e90ff; --accent-2:#f59e0b; --muted:#9fb0c6; --text:#eaf2ff;
-  --green:#0f5132; --green-2:#1f7a4f;
+  --green-1:#0f5132; --green-2:#1f7a4f; --glass: rgba(255,255,255,0.03);
 }
 *{box-sizing:border-box}
 body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gradient(180deg,#041028,#02243a);color:var(--text);-webkit-font-smoothing:antialiased}
@@ -22,43 +22,30 @@ body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gra
 .input{padding:8px 10px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--text);min-width:260px}
 .btn{background:var(--accent);color:#021028;border:0;padding:8px 12px;border-radius:10px;font-weight:700;cursor:pointer}
 .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--text)}
-
 .layout{display:grid;grid-template-columns:260px 1fr;gap:12px;align-items:start}
 @media(max-width:880px){ .layout{grid-template-columns:1fr} .sidebar{order:2} .main{order:1} .topnav{display:flex} .leftnav{display:none} .controls .input{min-width:140px} }
-
 .sidebar{background:var(--panel);padding:12px;border-radius:12px;min-height:360px}
 .leftnav{display:block}
 .topnav{display:none;padding:6px 0;margin-bottom:8px;gap:6px}
 .topnav button{flex:1;padding:8px;border-radius:8px;border:0;background:transparent;color:var(--text);font-weight:700}
 .nav-btn{display:flex;align-items:center;gap:10px;width:100%;padding:10px;border-radius:8px;border:0;background:transparent;color:var(--text);text-align:left;margin-bottom:8px;cursor:pointer;font-weight:600}
 .nav-btn.active{background:linear-gradient(90deg,var(--accent),#60a5fa);color:#021028}
-
 .card{background:var(--card);padding:12px;border-radius:12px;margin-bottom:12px;box-shadow:0 6px 20px rgba(2,6,12,0.4)}
 .small{font-size:13px;color:var(--muted)}
 .status-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
-
-/* table */
 .table{width:100%;border-collapse:collapse}
 .table th,.table td{padding:10px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:left}
 .table th{font-size:12px;color:var(--muted)}
 .table tbody tr:nth-child(odd){background:rgba(255,255,255,0.01)}
-
-/* fixture */
 .jornada-nav{display:flex;align-items:center;gap:8px;margin-bottom:10px}
 .jornada-btn{padding:8px 10px;border-radius:8px;border:0;background:transparent;color:var(--text);cursor:pointer}
 .jornada-btn.active{background:rgba(255,255,255,0.03)}
-
-/* bracket */
 .bracket{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;align-items:start}
-.column{background:rgba(255,255,255,0.01);padding:10px;border-radius:10px}
-.match{background:linear-gradient(180deg,var(--green),var(--green-2));color:white;padding:8px;border-radius:8px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;opacity:0;transform:translateY(6px)}
-
-/* animations */
-.fade-in{animation:fadeIn .28s ease forwards}
-@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-.slide-left{animation:slideLeft .28s ease forwards}
-@keyframes slideLeft{from{opacity:0;transform:translateX(8px)}to{opacity:1;transform:translateX(0)}}
-
+.column{background:rgba(255,255,255,0.01);padding:10px;border-radius:10px;min-height:140px}
+.match{background:linear-gradient(180deg,var(--green-1),var(--green-2));color:white;padding:10px;border-radius:10px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 6px 16px rgba(0,0,0,0.35)}
+.match .teams{display:flex;flex-direction:column;gap:4px}
+.match .score{font-weight:800;background:rgba(0,0,0,0.12);padding:6px 10px;border-radius:8px}
+.bracket-title{text-align:center;font-weight:800;margin-bottom:8px;color:var(--muted)}
 @media(max-width:540px){ .controls{flex-wrap:wrap;gap:6px} .input{min-width:120px} .bracket{grid-template-columns:1fr} }
 .toast{position:fixed;right:18px;bottom:18px;background:rgba(0,0,0,0.7);color:white;padding:8px 12px;border-radius:8px;display:none}
 </style>
@@ -102,7 +89,7 @@ body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gra
 
         <section id="pos" class="card" style="display:block">
           <h3>🏆 Tabla de Posiciones</h3>
-          <div id="standingsTable" style="margin-top:8px" class="fade-in"></div>
+          <div id="standingsTable" style="margin-top:8px"></div>
         </section>
 
         <section id="fixture" class="card" style="display:none">
@@ -114,18 +101,22 @@ body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gra
               <button id="nextJ" class="jornada-btn">▶</button>
             </div>
           </div>
-          <div id="fixtureList" style="margin-top:6px" class="slide-left"></div>
+          <div id="fixtureList" style="margin-top:6px"></div>
         </section>
 
         <section id="playoffs" class="card" style="display:none">
           <h3>⚔️ Playoffs (Top 8)</h3>
-          <div id="bracket" class="bracket" style="margin-top:10px"></div>
-          <div class="small" style="margin-top:10px">Para automatizar: añadí en la hoja filas de playoff con columna `fase` (ej. QF1,QF2.. SF1,SF2,FINAL) o usá jornadas >=100. Rellená scores y la app completará etapas.</div>
+          <div id="bracket" class="bracket" style="margin-top:10px">
+            <div class="column" id="col-qf"><div class="bracket-title">CUARTOS</div></div>
+            <div class="column" id="col-sf"><div class="bracket-title">SEMIFINALES</div></div>
+            <div class="column" id="col-final"><div class="bracket-title">FINAL</div></div>
+          </div>
+          <div class="small" style="margin-top:10px">Para automatizar: añadí en la hoja filas de playoff con columna fase (QF1..QF4, SF1..SF2, FINAL) o usá jornadas >=100 y completá scores.</div>
         </section>
 
         <section id="goleadores" class="card" style="display:none">
           <h3>🔥 Tabla de Goleadores</h3>
-          <div id="goleadoresBox" style="margin-top:8px" class="fade-in"></div>
+          <div id="goleadoresBox" style="margin-top:8px"></div>
         </section>
       </main>
     </div>
@@ -147,6 +138,7 @@ body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gra
   let jornadasSorted = [];
   let currentJornada = null;
   let autoTimer = null;
+  let jornadasListenersAdded = false;
 
   function toast(msg, t=1300){ toastEl.textContent = msg; toastEl.style.display='block'; setTimeout(()=> toastEl.style.display='none', t); }
 
@@ -214,11 +206,12 @@ body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gra
         obj.jornada = obj.jornada ? Number(obj.jornada) : null;
         obj.score_local = obj.score_local === '' ? null : (isNaN(Number(obj.score_local)) ? obj.score_local : Number(obj.score_local));
         obj.score_visita = obj.score_visita === '' ? null : (isNaN(Number(obj.score_visita)) ? obj.score_visita : Number(obj.score_visita));
-        obj.fase = obj.fase ? obj.fase.trim().toUpperCase() : '';
+        obj.fase = obj.fase ? String(obj.fase).trim().toUpperCase() : '';
         obj.estado = obj.estado ? obj.estado : (obj.score_local != null && obj.score_visita != null ? 'finalizado' : 'programado');
         return obj;
       });
       latestMatches = data;
+      updateJornadasData(data);
       renderAll(data);
       toast('Listo',800);
     }catch(err){
@@ -251,7 +244,7 @@ body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gra
     const s = aggregateStandings(matches);
     const container = document.getElementById('standingsTable'); container.innerHTML = '';
     if (!s.length){ container.innerHTML = '<div class="small">No hay datos</div>'; return; }
-    const table = document.createElement('table'); table.className='table fade-in';
+    const table = document.createElement('table'); table.className='table';
     const thead = document.createElement('thead'); thead.innerHTML = '<tr><th>Pos</th><th>Equipo</th><th>PJ</th><th>PG</th><th>PP</th><th>PF</th><th>PC</th><th>DF</th><th>PTS</th></tr>';
     table.appendChild(thead);
     const tbody = document.createElement('tbody');
@@ -264,34 +257,51 @@ body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gra
     table.appendChild(tbody); container.appendChild(table);
   }
 
-  function setupJornadas(matches){
-    jornadasSorted = [...new Set(matches.map(m=>m.jornada).filter(v=>v!=null))].sort((a,b)=>a-b);
+  function updateJornadasData(matches){
+    const js = [...new Set(matches.map(m=>m.jornada).filter(v=>v!=null))].sort((a,b)=>a-b);
+    jornadasSorted = js;
     const sel = document.getElementById('jornadaSelect');
-    sel.innerHTML = '';
-    jornadasSorted.forEach(j => {
-      const o = document.createElement('option'); o.value = j; o.textContent = 'Jornada ' + j; sel.appendChild(o);
-    });
-    if (jornadasSorted.length) currentJornada = jornadasSorted[0];
-    sel.addEventListener('change', ()=> { currentJornada = Number(sel.value); renderFixture(latestMatches); });
-    document.getElementById('prevJ').addEventListener('click', ()=>{
-      if (!jornadasSorted.length) return;
-      const idx = jornadasSorted.indexOf(currentJornada);
-      if (idx > 0) currentJornada = jornadasSorted[idx-1];
-      sel.value = currentJornada; renderFixture(latestMatches);
-    });
-    document.getElementById('nextJ').addEventListener('click', ()=>{
-      if (!jornadasSorted.length) return;
-      const idx = jornadasSorted.indexOf(currentJornada);
-      if (idx < jornadasSorted.length - 1) currentJornada = jornadasSorted[idx+1];
-      sel.value = currentJornada; renderFixture(latestMatches);
-    });
+    const existing = Array.from(sel.options).map(o=>Number(o.value));
+    const equal = existing.length === js.length && existing.every((v,i)=>v === js[i]);
+    if (!equal){
+      sel.innerHTML = '';
+      js.forEach(j => {
+        const o = document.createElement('option'); o.value = j; o.textContent = 'Jornada ' + j; sel.appendChild(o);
+      });
+    }
+    if (currentJornada == null || !js.includes(currentJornada)){
+      currentJornada = js.length ? js[0] : null;
+      if (currentJornada != null) sel.value = currentJornada;
+    } else {
+      sel.value = currentJornada;
+    }
+    if (!jornadasListenersAdded){
+      document.getElementById('prevJ').addEventListener('click', ()=>{
+        if (!jornadasSorted.length) return;
+        const idx = jornadasSorted.indexOf(currentJornada);
+        if (idx > 0) currentJornada = jornadasSorted[idx-1];
+        document.getElementById('jornadaSelect').value = currentJornada;
+        renderFixture(latestMatches);
+      });
+      document.getElementById('nextJ').addEventListener('click', ()=>{
+        if (!jornadasSorted.length) return;
+        const idx = jornadasSorted.indexOf(currentJornada);
+        if (idx < jornadasSorted.length - 1) currentJornada = jornadasSorted[idx+1];
+        document.getElementById('jornadaSelect').value = currentJornada;
+        renderFixture(latestMatches);
+      });
+      document.getElementById('jornadaSelect').addEventListener('change', (e)=>{
+        currentJornada = Number(e.target.value);
+        renderFixture(latestMatches);
+      });
+      jornadasListenersAdded = true;
+    }
   }
 
   function renderFixture(matches){
-    setupJornadas(matches);
     const container = document.getElementById('fixtureList'); container.innerHTML = '';
     if (!currentJornada){ container.innerHTML = '<div class="small">No hay jornadas definidas.</div>'; return; }
-    const block = document.createElement('div'); block.className='fade-in';
+    const block = document.createElement('div');
     const hdr = document.createElement('div'); hdr.style.display='flex'; hdr.style.justifyContent='space-between'; hdr.style.alignItems='center';
     hdr.innerHTML = `<strong>Jornada ${currentJornada}</strong><span class="small">${matches.filter(m=>m.jornada===currentJornada).length} partidos</span>`;
     block.appendChild(hdr);
@@ -312,16 +322,13 @@ body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gra
   }
 
   function renderBracket(matches){
-    const colQf = document.getElementById('bracket').children[0] || document.createElement('div');
-    document.getElementById('bracket').innerHTML = '<div class="column" id="col-qf"></div><div class="column" id="col-sf"></div><div class="column" id="col-final"></div>';
+    const bracket = document.getElementById('bracket');
+    bracket.innerHTML = '<div class="column" id="col-qf"><div class="bracket-title">CUARTOS</div></div><div class="column" id="col-sf"><div class="bracket-title">SEMIFINALES</div></div><div class="column" id="col-final"><div class="bracket-title">FINAL</div></div>';
     const colQ = document.getElementById('col-qf'), colS = document.getElementById('col-sf'), colF = document.getElementById('col-final');
-
     const stand = aggregateStandings(matches).slice(0,8);
     const explicitQF = matches.filter(m=>m.fase && m.fase.startsWith('QF')).sort((a,b)=>a.fase.localeCompare(b.fase));
     const explicitSF = matches.filter(m=>m.fase && m.fase.startsWith('SF')).sort((a,b)=>a.fase.localeCompare(b.fase));
     const explicitFinal = matches.filter(m=>m.fase && (m.fase==='FINAL' || m.fase==='F')).sort((a,b)=>a.id - b.id);
-
-    if (!stand.length && !explicitQF.length){ colQ.innerHTML = '<div class="small">No hay equipos suficientes</div>'; return; }
 
     const pairsAuto = [
       [stand[0]||null, stand[7]||null],
@@ -330,55 +337,50 @@ body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gra
       [stand[1]||null, stand[6]||null]
     ];
 
-    // QF: use explicit rows if present, otherwise auto pairs
-    const qfToRender = explicitQF.length ? explicitQF : pairsAuto.map((p,i)=>({fase:'QF'+(i+1), equipo_local: p[0]?p[0].nombre:'', equipo_visita: p[1]?p[1].nombre:''}));
+    const qfToRender = explicitQF.length ? explicitQF : pairsAuto.map((p,i)=>({fase:'QF'+(i+1), equipo_local: p[0]?p[0].nombre:'TBD', equipo_visita: p[1]?p[1].nombre:'TBD'}));
 
-    qfToRender.forEach((q,i)=>{
-      const el = document.createElement('div'); el.className='match fade-in';
-      let left = q.equipo_local || '';
-      let right = q.equipo_visita || '';
-      if (!left && !right && pairsAuto[i]){ left = pairsAuto[i][0] ? pairsAuto[i][0].nombre : 'TBD'; right = pairsAuto[i][1] ? pairsAuto[i][1].nombre : 'TBD'; }
+    qfToRender.forEach((q)=>{
+      const el = document.createElement('div'); el.className='match';
+      const left = q.equipo_local || 'TBD';
+      const right = q.equipo_visita || 'TBD';
       const score = (q.score_local!=null && q.score_visita!=null) ? `${q.score_local} — ${q.score_visita}` : '—';
-      el.innerHTML = `<div style="font-weight:700">${left}</div><div class="small">${score}</div><div style="font-weight:700">${right}</div>`;
+      el.innerHTML = `<div class="teams"><div style="font-weight:700">${left}</div><div style="font-size:12px;color:rgba(255,255,255,0.85)">${q.fase||''}</div></div><div class="score">${score}</div><div class="teams right"><div style="font-weight:700;text-align:right">${right}</div></div>`;
       colQ.appendChild(el);
     });
 
-    // SF placeholders or explicit
     const sfToRender = explicitSF.length ? explicitSF : [{fase:'SF1'},{fase:'SF2'}];
-    sfToRender.forEach((s,i)=>{
-      const el = document.createElement('div'); el.className='match fade-in';
-      let left = s.equipo_local || 'A confirmar', right = s.equipo_visita || 'A confirmar';
+    sfToRender.forEach((s)=>{
+      const el = document.createElement('div'); el.className='match';
+      const left = s.equipo_local || 'A confirmar';
+      const right = s.equipo_visita || 'A confirmar';
       const score = (s.score_local!=null && s.score_visita!=null) ? `${s.score_local} — ${s.score_visita}` : '—';
-      el.innerHTML = `<div style="font-weight:700">${left}</div><div class="small">${score}</div><div style="font-weight:700">${right}</div>`;
+      el.innerHTML = `<div class="teams"><div style="font-weight:700">${left}</div><div style="font-size:12px;color:rgba(255,255,255,0.85)">${s.fase||''}</div></div><div class="score">${score}</div><div class="teams right"><div style="font-weight:700;text-align:right">${right}</div></div>`;
       colS.appendChild(el);
     });
 
-    // FINAL placeholder / explicit
-    const finalToRender = explicitFinal.length ? explicitFinal[0] : {fase:'FINAL'};
-    const fEl = document.createElement('div'); fEl.className='match fade-in';
-    const fLeft = finalToRender.equipo_local || 'A confirmar', fRight = finalToRender.equipo_visita || 'A confirmar';
-    const fScore = (finalToRender.score_local!=null && finalToRender.score_visita!=null) ? `${finalToRender.score_local} — ${finalToRender.score_visita}` : '—';
-    fEl.innerHTML = `<div style="font-weight:700">${fLeft}</div><div class="small">${fScore}</div><div style="font-weight:700">${fRight}</div>`;
-    colF.appendChild(fEl);
+    const final = explicitFinal.length ? explicitFinal[0] : {fase:'FINAL'};
+    const fel = document.createElement('div'); fel.className='match';
+    const fleft = final.equipo_local || 'A confirmar';
+    const fright = final.equipo_visita || 'A confirmar';
+    const fscore = (final.score_local!=null && final.score_visita!=null) ? `${final.score_local} — ${final.score_visita}` : '—';
+    fel.innerHTML = `<div class="teams"><div style="font-weight:700">${fleft}</div><div style="font-size:12px;color:rgba(255,255,255,0.85)">${final.fase||''}</div></div><div class="score">${fscore}</div><div class="teams right"><div style="font-weight:700;text-align:right">${fright}</div></div>`;
+    colF.appendChild(fel);
 
-    // If explicit QF present and winners can be determined, auto-fill SF placeholders
     if (explicitQF.length){
       const qWinners = explicitQF.map(m => winnerFromMatch(m));
       if (qWinners.filter(Boolean).length >= 2){
-        // map winners to SF: QF1 vs QF2 -> SF1 ; QF3 vs QF4 -> SF2
         const sf1left = qWinners[0] || 'A confirmar', sf1right = qWinners[1] || 'A confirmar';
         const sf2left = qWinners[2] || 'A confirmar', sf2right = qWinners[3] || 'A confirmar';
-        colS.innerHTML = '';
-        [ [sf1left,sf1right], [sf2left,sf2right] ].forEach(p=>{
-          const el = document.createElement('div'); el.className='match fade-in'; el.innerHTML = `<div style="font-weight:700">${p[0]}</div><div class="small">—</div><div style="font-weight:700">${p[1]}</div>`; colS.appendChild(el);
+        colS.innerHTML = '<div class="bracket-title">SEMIFINALES</div>';
+        [[sf1left,sf1right],[sf2left,sf2right]].forEach(p=>{
+          const el = document.createElement('div'); el.className='match'; el.innerHTML = `<div class="teams"><div style="font-weight:700">${p[0]}</div></div><div class="score">—</div><div class="teams right"><div style="font-weight:700;text-align:right">${p[1]}</div></div>`; colS.appendChild(el);
         });
       }
-      // if SF explicit present and have winners, fill final
       if (explicitSF.length){
         const sfW = explicitSF.map(m=> winnerFromMatch(m));
         if (sfW.filter(Boolean).length === 2){
-          colF.innerHTML = '';
-          const el2 = document.createElement('div'); el2.className='match fade-in'; el2.innerHTML = `<div style="font-weight:700">${sfW[0]}</div><div class="small">—</div><div style="font-weight:700">${sfW[1]}</div>`; colF.appendChild(el2);
+          colF.innerHTML = '<div class="bracket-title">FINAL</div>';
+          const el2 = document.createElement('div'); el2.className='match'; el2.innerHTML = `<div class="teams"><div style="font-weight:700">${sfW[0]}</div></div><div class="score">—</div><div class="teams right"><div style="font-weight:700;text-align:right">${sfW[1]}</div></div>`; colF.appendChild(el2);
         }
       }
     }
@@ -401,7 +403,7 @@ body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gra
     }
     const arr = Object.keys(tally).map(n=>({nombre:n,pts:tally[n]})).sort((a,b)=>b.pts - a.pts || a.nombre.localeCompare(b.nombre));
     if (!arr.length){ box.innerHTML = '<div class="small">Aún no hay datos de goleadores.</div>'; return; }
-    const table = document.createElement('table'); table.className='table fade-in';
+    const table = document.createElement('table'); table.className='table';
     table.innerHTML = '<thead><tr><th>#</th><th>Jugador</th><th>Puntos</th></tr></thead>';
     const tbody = document.createElement('tbody');
     arr.forEach((r,i)=>{ const tr=document.createElement('tr'); tr.innerHTML = `<td>${i+1}</td><td>${r.nombre}</td><td style="text-align:right">${r.pts}</td>`; tbody.appendChild(tr); });
@@ -434,10 +436,8 @@ body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gra
       if (s) fetchAndRender(s);
       else if (DEFAULT_CSV) { saveUrl(DEFAULT_CSV); fetchAndRender(DEFAULT_CSV); }
     }
-    // auto-refresh ON by default
     document.getElementById('autoRefresh').checked = true;
     startAutoRefresh(30);
-    // mobile nav show
     if (window.innerWidth <= 880) document.querySelector('.topnav').style.display = 'flex';
   })();
 
