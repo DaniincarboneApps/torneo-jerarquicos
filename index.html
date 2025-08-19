@@ -3,39 +3,22 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Torneo Basquet - Jerarquicos</title>
+<title>Torneo Basquet — Jerárquicos</title>
 <style>
-  :root{--bg:#071428;--card:#071a2a;--accent:#1e90ff;--accent2:#f59e0b;--muted:#9fb0c6;--text:#eaf2ff}
-  body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gradient(180deg,#041028,#02243a);color:var(--text);-webkit-font-smoothing:antialiased}
-  .wrap{max-width:1100px;margin:14px auto;padding:12px}
+  :root{--bg:#071428;--card:#071a2a;--accent:#1e90ff;--muted:#9fb0c6;--text:#eaf2ff}
+  body{margin:0;font-family:Inter,system-ui,Arial,sans-serif;background:linear-gradient(180deg,#041028,#02243a);color:var(--text)}
+  .wrap{max-width:1100px;margin:16px auto;padding:12px}
   header{display:flex;gap:12px;align-items:center;margin-bottom:12px}
-  .logo{width:56px;height:56px;border-radius:10px;background:linear-gradient(135deg,#081224,#0b2b45);display:flex;align-items:center;justify-content:center;font-weight:800}
+  .logo{width:56px;height:56px;border-radius:10px;background:#082033;display:flex;align-items:center;justify-content:center;font-weight:800}
   h1{margin:0;font-size:18px}
-  .sub{color:var(--muted);font-size:13px;margin-top:2px}
   .controls{margin-left:auto;display:flex;gap:8px;align-items:center}
-  input[type=text]{padding:8px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:var(--text);min-width:280px}
+  input[type=text]{padding:8px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:var(--text);min-width:300px}
   button{background:var(--accent);color:#021028;border:0;padding:8px 12px;border-radius:8px;font-weight:700;cursor:pointer}
   button.ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--text)}
   .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:12px;border-radius:10px;margin-bottom:12px}
-  .grid{display:grid;grid-template-columns:1fr;gap:12px}
-  @media(min-width:900px){ .grid{grid-template-columns:360px 1fr} }
-  nav button{display:block;width:100%;text-align:left;padding:10px;border-radius:8px;background:transparent;border:0;color:var(--text);margin-bottom:6px;cursor:pointer}
-  nav button.active{background:linear-gradient(90deg,var(--accent),#60a5fa);color:#021028}
-  table{width:100%;border-collapse:collapse;color:var(--text);font-size:14px}
-  th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,0.03);text-align:left}
-  th{color:var(--muted);font-size:12px}
-  .pos{font-weight:800}
-  .highlight{background:linear-gradient(90deg, rgba(245,158,11,0.06), rgba(34,197,94,0.02));border-radius:6px}
-  .fixture-row{display:flex;align-items:center;justify-content:space-between;padding:8px;border-radius:8px}
-  .team{display:flex;gap:8px;align-items:center}
-  .badge{width:36px;height:36px;border-radius:8px;background:#012233;display:flex;align-items:center;justify-content:center;font-weight:700}
-  .muted{color:var(--muted);font-size:13px}
+  .muted{color:var(--muted)}
+  #statusBar{display:flex;gap:12px;align-items:center;font-size:13px}
   .small{font-size:13px;color:var(--muted)}
-  .playoff-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-  @media(min-width:900px){ .playoff-grid{grid-template-columns:repeat(4,1fr)} }
-  .top-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-  .note{font-size:13px;color:var(--muted);margin-top:6px}
-  .btn-export{background:var(--accent2);color:#021028}
 </style>
 </head>
 <body>
@@ -44,332 +27,239 @@
       <div class="logo">BB</div>
       <div>
         <h1>TORNEO BASQUET — JERÁRQUICOS</h1>
-        <div class="sub">Ver resultados · Fixture · Tabla de posiciones · Playoffs (Top 8)</div>
+        <div class="small">La URL del CSV está preconfigurada. Usá "Actualizar" para traer datos; activá Auto-refresh si querés.</div>
       </div>
 
       <div class="controls">
-        <input id="csvUrl" type="text" placeholder="Pegá aquí la URL CSV publicada (Google Sheets → Publicar → CSV)" />
+        <input id="csvUrl" type="text" placeholder="URL CSV (publicar → CSV, termina en ?output=csv)" />
         <button id="saveCsv" class="ghost">Guardar URL</button>
         <button id="updateBtn">Actualizar</button>
-        <button id="downloadBtn" class="btn btn-export">Descargar CSV</button>
+        <label class="small" style="display:inline-flex;align-items:center;gap:6px"><input id="autoRefresh" type="checkbox"/> Auto-refresh 30s</label>
       </div>
     </header>
 
-    <div class="grid">
-      <aside>
-        <nav id="nav">
-          <button data-tab="standings" class="active">🏆 Tabla de Posiciones</button>
-          <button data-tab="fixture">📅 Fixture</button>
-          <button data-tab="playoffs">⚔️ Playoffs</button>
-          <button data-tab="goleadores">🔥 Goleadores</button>
-          <div class="note">Edición: los resultados se cargan en Google Sheets. Solo den permiso de Editor a las 1–3 personas autorizadas.</div>
-        </nav>
-      </aside>
-
-      <main>
-        <section id="standings" class="card" style="display:block">
-          <h3>Tabla de Posiciones</h3>
-          <div id="standingsTable" style="margin-top:8px;overflow:auto"></div>
-        </section>
-
-        <section id="fixture" class="card" style="display:none">
-          <h3>Fixture / Resultados</h3>
-          <div id="fixtureList" style="margin-top:8px"></div>
-        </section>
-
-        <section id="playoffs" class="card" style="display:none">
-          <h3>Playoffs (Top 8)</h3>
-          <div id="playoffBox" class="playoff-grid" style="margin-top:8px"></div>
-        </section>
-
-        <section id="goleadores" class="card" style="display:none">
-          <h3>Goleadores</h3>
-          <div id="goleadoresBox" style="margin-top:8px"></div>
-        </section>
-      </main>
+    <div id="status" class="card">
+      <div id="statusBar">
+        <div id="statMsg">Estado: sin cargar</div>
+        <div id="lastUpdated" class="small">Última: —</div>
+        <div id="fetchInfo" class="small muted"></div>
+      </div>
     </div>
 
-    <footer style="margin-top:12px" class="muted">App simple – datos en Google Sheets · Compartí el link del HTML por WhatsApp o redes</footer>
+    <div id="content">
+      <div class="card" id="standings"><h3>Tabla de Posiciones</h3><div id="standingsTable"></div></div>
+      <div class="card" id="fixture"><h3>Fixture</h3><div id="fixtureList"></div></div>
+      <div class="card" id="playoffs"><h3>Playoffs (Top 8)</h3><div id="playoffBox" class="small"></div></div>
+    </div>
+
+    <footer class="small muted">Asegurate de usar el link "Publicar en la web" → CSV. Abrí el CSV en incógnito para verificar el acceso público.</footer>
   </div>
 
 <script>
 (function(){
-  // ======= Utils: CSV parser (maneja comillas y comas dentro de campos) =======
+  const STORAGE_KEY = 'torneo_csv_url_jr';
+  const csvInput = document.getElementById('csvUrl');
+  const saveBtn = document.getElementById('saveCsv');
+  const updateBtn = document.getElementById('updateBtn');
+  const autoCheck = document.getElementById('autoRefresh');
+  const statMsg = document.getElementById('statMsg');
+  const lastUpdated = document.getElementById('lastUpdated');
+  const fetchInfo = document.getElementById('fetchInfo');
+
+  // URL CSV ya configurada por defecto (la que nos pasaste)
+  const DEFAULT_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTfK4mr4OIlKn4GerZ2QDl_h2_YLWgONz3x4MF6jRFaMIPHA6A_-Wv535UB4_dy6N3YOBiq6zORBY7X/pub?gid=1178727492&single=true&output=csv';
+
+  let latestMatches = [];
+  let autoTimer = null;
+
+  function getCsvParam(){
+    try{
+      const params = new URLSearchParams(window.location.search);
+      const csvParam = params.get('csv');
+      return csvParam ? decodeURIComponent(csvParam) : null;
+    }catch(e){ return null; }
+  }
+
+  function loadSaved(){ const v = localStorage.getItem(STORAGE_KEY); if (v) csvInput.value = v; return v; }
+  function saveUrl(v){ localStorage.setItem(STORAGE_KEY, v); csvInput.value = v; toast('URL guardada'); }
+  saveBtn.addEventListener('click', ()=> {
+    const v = csvInput.value.trim();
+    if (!v) return toast('Pega la URL CSV (Publicar → CSV).');
+    saveUrl(v);
+  });
+
+  updateBtn.addEventListener('click', ()=> {
+    const url = csvInput.value.trim() || loadSaved() || DEFAULT_CSV;
+    if (!url) return toast('No hay URL CSV configurada.');
+    fetchAndRender(url);
+  });
+
+  autoCheck.addEventListener('change', ()=> {
+    if (autoCheck.checked) { startAutoRefresh(30); toast('Auto-refresh activado (30s)'); }
+    else { stopAutoRefresh(); toast('Auto-refresh desactivado'); }
+  });
+
+  function startAutoRefresh(seconds){
+    stopAutoRefresh();
+    autoTimer = setInterval(()=> {
+      const url = csvInput.value.trim() || loadSaved() || DEFAULT_CSV;
+      if (url) fetchAndRender(url);
+    }, seconds*1000);
+  }
+  function stopAutoRefresh(){ if (autoTimer) clearInterval(autoTimer); autoTimer = null; }
+
+  function toast(msg, t=1500){
+    let el = document.getElementById('__toast'); if (!el){ el = document.createElement('div'); el.id='__toast'; el.style.position='fixed'; el.style.right='18px'; el.style.bottom='18px'; el.style.background='rgba(0,0,0,0.7)'; el.style.padding='8px 12px'; el.style.borderRadius='8px'; el.style.color='white'; document.body.appendChild(el); }
+    el.textContent = msg; el.style.opacity = '1'; setTimeout(()=> el.style.opacity = '0', t);
+  }
+
   function parseCSV(text){
-    const rows = [];
-    let cur = ''; let row = []; let i=0; let inQuotes = false;
-    while(i < text.length){
+    const rows=[]; let cur=''; let row=[]; let inQ=false; for (let i=0;i<text.length;i++){
       const ch = text[i];
-      if (ch === '"') {
-        if (inQuotes && text[i+1] === '"') { cur += '"'; i += 2; continue; }
-        inQuotes = !inQuotes; i++; continue;
-      }
-      if (!inQuotes && (ch === ',' || ch === '\n' || ch === '\r')) {
-        row.push(cur); cur = '';
-        // handle CRLF
-        if (ch === '\r' && text[i+1] === '\n') { i += 2; rows.push(row); row = []; continue; }
-        if (ch === '\n' || ch === '\r') { i++; rows.push(row); row = []; continue; }
-        i++; continue;
-      }
-      cur += ch; i++;
+      if (ch === '"'){ if (inQ && text[i+1]==='"'){ cur+='"'; i++; continue } inQ = !inQ; continue; }
+      if (!inQ && (ch===',' || ch==='\n' || ch==='\r')){ row.push(cur); cur=''; if (ch=== '\r' && text[i+1]==='\n'){ i++; rows.push(row); row=[]; continue } if (ch=== '\n' || ch==='\r'){ rows.push(row); row=[]; continue } continue; }
+      cur += ch;
     }
-    // push remaining
     if (cur !== '' || row.length) row.push(cur);
     if (row.length) rows.push(row);
     return rows;
   }
 
-  // ======= Helpers =======
-  const csvInput = document.getElementById('csvUrl');
-  const saveCsvBtn = document.getElementById('saveCsv');
-  const updateBtn = document.getElementById('updateBtn');
-  const downloadBtn = document.getElementById('downloadBtn');
-
-  // Keep CSV URL in localStorage so user doesn't edit file each vez
-  const STORAGE_KEY = 'torneo_csv_url_jr';
-  function loadSavedUrl(){ const v = localStorage.getItem(STORAGE_KEY); if (v) csvInput.value = v; return v; }
-  function saveUrl(v){ localStorage.setItem(STORAGE_KEY, v); csvInput.value = v; toast('URL guardada'); }
-
-  saveCsvBtn.addEventListener('click', ()=> {
-    const v = csvInput.value.trim();
-    if (!v) return toast('Pega primero la URL CSV publicada desde Google Sheets');
-    saveUrl(v);
-  });
-
-  updateBtn.addEventListener('click', ()=> {
-    const url = csvInput.value.trim() || loadSavedUrl();
-    if (!url) return toast('No hay URL CSV configurada. Publicá la hoja y pegá la URL aquí.');
-    fetchAndRender(url);
-  });
-
-  downloadBtn.addEventListener('click', ()=> {
-    if (!window.latestMatches || !window.latestMatches.length) return toast('No hay datos para descargar. Pulsá Actualizar.');
-    const header = ['id','jornada','equipo_local','equipo_visita','score_local','score_visita','estado','cancha','fecha_hora','goleadores_local','goleadores_visita'];
-    const lines = [header.join(',')];
-    for (const m of window.latestMatches){
-      // escape values that contain comma or quotes
-      const cols = header.map(h=>{
-        let v = m[h] ?? '';
-        if (v === null || v === undefined) v = '';
-        v = String(v);
-        if (v.includes('"')) v = v.replace(/"/g,'""');
-        if (v.includes(',') || v.includes('"') || v.includes('\n')) v = `"${v}"`;
-        return v;
-      });
-      lines.push(cols.join(','));
-    }
-    const blob = new Blob([lines.join('\n')], { type:'text/csv' });
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'matches_export.csv'; a.click(); URL.revokeObjectURL(a.href);
-    toast('CSV descargado');
-  });
-
-  // Nav
-  document.getElementById('nav').addEventListener('click', function(e){
-    const btn = e.target.closest('button[data-tab]');
-    if (!btn) return;
-    document.querySelectorAll('#nav button').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    const tab = btn.getAttribute('data-tab');
-    document.querySelectorAll('main section').forEach(s=>s.style.display='none');
-    document.getElementById(tab).style.display='block';
-  });
-
-  // toast
-  let toastTimer = null;
-  function toast(msg, t=1800){
-    let el = document.getElementById('__toast');
-    if (!el){
-      el = document.createElement('div'); el.id='__toast';
-      el.style.position='fixed'; el.style.right='18px'; el.style.bottom='18px';
-      el.style.background='rgba(3,10,23,0.9)'; el.style.padding='10px 14px'; el.style.borderRadius='10px';
-      el.style.color='white'; el.style.fontSize='14px'; el.style.boxShadow='0 8px 30px rgba(0,0,0,0.5)';
-      document.body.appendChild(el);
-    }
-    el.textContent = msg;
-    el.style.opacity = '1';
-    if (toastTimer) clearTimeout(toastTimer);
-    toastTimer = setTimeout(()=> el.style.opacity = '0', t);
-  }
-
-  // ======= Core: fetch CSV, parse and render =======
-  async function fetchAndRender(url){
+  async function fetchAndRender(rawUrl){
+    const urlBase = rawUrl.split('?')[0];
+    const tail = rawUrl.includes('?') ? '?' + rawUrl.split('?')[1] : '?output=csv';
+    const cacheBuster = (tail.includes('?') ? '&' : '?') + 't=' + Date.now();
+    const url = urlBase + tail + cacheBuster;
+    statMsg.textContent = 'Estado: cargando...';
+    fetchInfo.textContent = '';
     try{
-      toast('Cargando datos...');
-      const res = await fetch(url, {cache: 'no-store'}); // no-cache so viewers get latest
-      if (!res.ok) throw new Error('HTTP '+res.status);
+      const res = await fetch(url, {cache: 'no-store'});
+      if (!res.ok) throw new Error('HTTP ' + res.status);
       const text = await res.text();
+      if (!text || text.trim().length === 0) throw new Error('CSV vacío');
       const rows = parseCSV(text);
-      if (!rows || !rows.length) throw new Error('CSV vacío o inválido');
-      const header = rows[0].map(h => String(h||'').trim());
-      const data = rows.slice(1).map(r => {
+      const header = rows[0].map(h=>String(h||'').trim());
+      const data = rows.slice(1).map(r=>{
         const obj = {};
-        for (let i=0;i<header.length;i++){
-          obj[header[i]] = (r[i] ?? '').trim();
-        }
-        // normalize common fields and types
-        obj.id = obj.id ? (isNaN(Number(obj.id)) ? obj.id : Number(obj.id)) : null;
+        for (let i=0;i<header.length;i++) obj[header[i]] = (r[i] ?? '').trim();
         obj.jornada = obj.jornada ? Number(obj.jornada) : null;
         obj.score_local = obj.score_local === '' ? null : (isNaN(Number(obj.score_local)) ? obj.score_local : Number(obj.score_local));
         obj.score_visita = obj.score_visita === '' ? null : (isNaN(Number(obj.score_visita)) ? obj.score_visita : Number(obj.score_visita));
-        obj.estado = obj.estado ? obj.estado : (obj.score_local != null && obj.score_visita != null ? 'finished' : 'scheduled');
-        // ensure goleadores fields exist
-        obj.goleadores_local = obj.goleadores_local ?? '';
-        obj.goleadores_visita = obj.goleadores_visita ?? '';
+        obj.estado = obj.estado ? obj.estado : (obj.score_local != null && obj.score_visita != null ? 'finalizado' : 'programado');
         return obj;
       });
-      window.latestMatches = data;
+      latestMatches = data;
       renderAll(data);
-      toast('Datos cargados',900);
+      const when = new Date();
+      lastUpdated.textContent = 'Última: ' + when.toLocaleString();
+      statMsg.textContent = 'Estado: cargado correctamente';
+      fetchInfo.textContent = `Filas: ${data.length}`;
     }catch(err){
       console.error(err);
-      toast('Error al cargar CSV: '+err.message,3000);
+      statMsg.textContent = 'Estado: error al cargar';
+      fetchInfo.textContent = err.message;
+      toast('Error: ' + err.message, 4000);
     }
   }
 
-  // ======= Renderers =======
+  // renderers
   function aggregateStandings(matches){
-    const map = {};
+    const map={};
     for (const m of matches){
-      const aName = String(m.equipo_local || '').trim();
-      const bName = String(m.equipo_visita || '').trim();
-      if (!aName || !bName) continue;
-      if (!map[aName]) map[aName] = { nombre:aName, PJ:0, PG:0, PP:0, PF:0, PC:0, PTS:0 };
-      if (!map[bName]) map[bName] = { nombre:bName, PJ:0, PG:0, PP:0, PF:0, PC:0, PTS:0 };
-      if (m.score_local == null || m.score_visita == null) continue;
+      const a = (m.equipo_local||'').trim(); const b=(m.equipo_visita||'').trim();
+      if (!a || !b) continue;
+      map[a] = map[a] || { nombre:a, PJ:0, PG:0, PP:0, PF:0, PC:0 };
+      map[b] = map[b] || { nombre:b, PJ:0, PG:0, PP:0, PF:0, PC:0 };
+      if (m.score_local==null || m.score_visita==null) continue;
       const la = Number(m.score_local), lb = Number(m.score_visita);
       if (!Number.isFinite(la) || !Number.isFinite(lb)) continue;
-      map[aName].PJ++; map[bName].PJ++;
-      map[aName].PF += la; map[aName].PC += lb;
-      map[bName].PF += lb; map[bName].PC += la;
-      if (la > lb) { map[aName].PG++; map[bName].PP++; }
-      else if (la < lb) { map[bName].PG++; map[aName].PP++; }
+      map[a].PJ++; map[b].PJ++;
+      map[a].PF += la; map[a].PC += lb;
+      map[b].PF += lb; map[b].PC += la;
+      if (la>lb){ map[a].PG++; map[b].PP++; } else if (la<lb){ map[b].PG++; map[a].PP++; }
     }
-    const arr = Object.values(map).map(s => ({ ...s, DF: s.PF - s.PC, PTS: 2*s.PG + 1*s.PP }));
-    arr.sort((x,y) => y.PTS - x.PTS || y.DF - x.DF || y.PF - x.PF || x.nombre.localeCompare(y.nombre));
-    return arr.map((r,i) => ({ ...r, pos: i+1 }));
+    const arr = Object.values(map).map(s=>({ ...s, DF: s.PF - s.PC, PTS: 2*s.PG + 1*s.PP }));
+    arr.sort((x,y)=> y.PTS - x.PTS || y.DF - x.DF || y.PF - x.PF || x.nombre.localeCompare(y.nombre));
+    return arr.map((r,i)=>({ ...r, pos: i+1 }));
   }
 
   function renderStandings(matches){
     const s = aggregateStandings(matches);
-    const container = document.getElementById('standingsTable');
-    container.innerHTML = '';
-    const table = document.createElement('table');
-    const thead = document.createElement('thead');
-    thead.innerHTML = '<tr><th>Pos</th><th>Equipo</th><th>PJ</th><th>PG</th><th>PP</th><th>PF</th><th>PC</th><th>DF</th><th>PTS</th></tr>';
-    table.appendChild(thead);
+    const cont = document.getElementById('standingsTable'); cont.innerHTML = '';
+    if (!s.length){ cont.innerHTML = '<div class="muted">No hay datos</div>'; return; }
+    const tbl = document.createElement('table'); tbl.style.width='100%';
+    const thead = document.createElement('thead'); thead.innerHTML = '<tr><th>Pos</th><th>Equipo</th><th>PJ</th><th>PG</th><th>PP</th><th>PF</th><th>PC</th><th>DF</th><th>PTS</th></tr>';
+    tbl.appendChild(thead);
     const tbody = document.createElement('tbody');
     for (const r of s){
       const tr = document.createElement('tr');
-      if (r.pos <= 8) tr.className = 'highlight';
-      tr.innerHTML = `<td class="pos">${r.pos}</td><td>${r.nombre}</td><td style="text-align:center">${r.PJ}</td><td style="text-align:center">${r.PG}</td><td style="text-align:center">${r.PP}</td><td style="text-align:center">${r.PF}</td><td style="text-align:center">${r.PC}</td><td style="text-align:center">${r.DF}</td><td style="text-align:center;font-weight:800">${r.PTS}</td>`;
+      if (r.pos <= 8) tr.style.background='rgba(245,158,11,0.06)';
+      tr.innerHTML = `<td>${r.pos}</td><td>${r.nombre}</td><td style="text-align:center">${r.PJ}</td><td style="text-align:center">${r.PG}</td><td style="text-align:center">${r.PP}</td><td style="text-align:center">${r.PF}</td><td style="text-align:center">${r.PC}</td><td style="text-align:center">${r.DF}</td><td style="text-align:center">${r.PTS}</td>`;
       tbody.appendChild(tr);
     }
-    table.appendChild(tbody);
-    container.appendChild(table);
+    tbl.appendChild(tbody); cont.appendChild(tbl);
   }
 
   function renderFixture(matches){
-    const container = document.getElementById('fixtureList');
-    container.innerHTML = '';
-    const jornadas = [...new Set(matches.map(m => m.jornada).filter(v=>v!=null))].sort((a,b)=>a-b);
-    if (!jornadas.length) container.innerHTML = '<div class="muted">No hay jornadas definidas en el CSV.</div>';
+    const cont = document.getElementById('fixtureList'); cont.innerHTML = '';
+    const jornadas = [...new Set(matches.map(m=>m.jornada).filter(v=>v!=null))].sort((a,b)=>a-b);
+    if (!jornadas.length) { cont.innerHTML = '<div class="muted">No hay partidos definidos.</div>'; return; }
     for (const j of jornadas){
       const block = document.createElement('div'); block.style.marginBottom='10px';
-      const hdr = document.createElement('div'); hdr.style.display='flex'; hdr.style.justifyContent='space-between'; hdr.style.marginBottom='6px';
+      const hdr = document.createElement('div'); hdr.style.display='flex'; hdr.style.justifyContent='space-between';
       hdr.innerHTML = `<strong>Jornada ${j}</strong><span class="small">${matches.filter(m=>m.jornada===j).length} partidos</span>`;
       block.appendChild(hdr);
       for (const m of matches.filter(x=>x.jornada===j)){
-        const row = document.createElement('div'); row.className='fixture-row';
-        const local = m.equipo_local || 'TBD';
-        const visita = m.equipo_visita || 'TBD';
-        const score = `<strong>${m.score_local != null ? m.score_local : '-'} - ${m.score_visita != null ? m.score_visita : '-'}</strong>`;
-        const left = document.createElement('div'); left.className='team'; left.innerHTML = `<div class="badge">${initials(local)}</div><div style="min-width:140px">${local}</div>`;
-        const mid = document.createElement('div'); mid.innerHTML = score;
-        const right = document.createElement('div'); right.className='team'; right.innerHTML = `<div style="min-width:140px">${visita}</div>`;
-        const meta = document.createElement('div'); meta.className='small'; meta.textContent = m.estado + (m.cancha ? ' · '+m.cancha : '') + (m.fecha_hora ? ' · '+m.fecha_hora : '');
-        row.appendChild(left); row.appendChild(mid); row.appendChild(right); row.appendChild(meta);
+        const row = document.createElement('div'); row.style.display='flex'; row.style.justifyContent='space-between'; row.style.padding='6px 0';
+        const left = document.createElement('div'); left.textContent = `${m.equipo_local || 'TBD'}`;
+        const center = document.createElement('div'); center.innerHTML = `<strong>${m.score_local!=null?m.score_local:'-'} - ${m.score_visita!=null?m.score_visita:'-'}</strong>`;
+        const right = document.createElement('div'); right.textContent = `${m.equipo_visita || 'TBD'}`;
+        const meta = document.createElement('div'); meta.className='small muted'; meta.textContent = (m.cancha?m.cancha+' · ':'') + (m.fecha?m.fecha+' ':'') + (m.hora?m.hora:'');
+        row.appendChild(left); row.appendChild(center); row.appendChild(right); row.appendChild(meta);
         block.appendChild(row);
       }
-      container.appendChild(block);
+      cont.appendChild(block);
     }
-  }
-
-  function initials(name){
-    if (!name) return '';
-    return name.split(' ').map(w=>w[0]||'').slice(0,2).join('').toUpperCase();
   }
 
   function buildPlayoffs(matches){
-    const standings = aggregateStandings(matches);
-    const top8 = standings.slice(0,8);
+    const standings = aggregateStandings(matches).slice(0,8);
     const pairs = [[1,8],[4,5],[3,6],[2,7]];
-    return pairs.map((p,i)=>({ match: i+1, home: top8[p[0]-1] || null, away: top8[p[1]-1] || null }));
+    return pairs.map((p,i)=>({ match:i+1, home: standings[p[0]-1]||null, away: standings[p[1]-1]||null }));
   }
-
   function renderPlayoffs(matches){
     const box = document.getElementById('playoffBox'); box.innerHTML = '';
     const data = buildPlayoffs(matches);
-    if (!data.length) { box.innerHTML = '<div class="muted">No hay suficientes equipos para playoffs.</div>'; return; }
+    if (!data.length){ box.innerHTML = '<div class="muted">No hay suficientes equipos para playoffs</div>'; return; }
     for (const b of data){
-      const c = document.createElement('div');
-      c.style.padding='10px'; c.style.borderRadius='8px'; c.style.background='linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01))';
-      c.innerHTML = `<div class="small">QF ${b.match}</div><div style="margin-top:8px;font-weight:700">${b.home ? b.home.nombre : 'TBD'}</div><div style="font-size:12px;color:var(--muted)">vs</div><div style="margin-top:6px;font-weight:700">${b.away ? b.away.nombre : 'TBD'}</div>`;
+      const c = document.createElement('div'); c.style.marginBottom='8px';
+      c.innerHTML = `<div class="small">QF ${b.match}</div><div style="font-weight:700">${b.home?b.home.nombre:'TBD'}</div><div class="small muted">vs</div><div style="font-weight:700">${b.away?b.away.nombre:'TBD'}</div>`;
       box.appendChild(c);
     }
-  }
-
-  // parse goleadores field like "Juan:10;Pedro:8"
-  function parseScorersField(field){
-    if (!field) return [];
-    return field.split(';').map(s=>s.trim()).filter(Boolean).map(part=>{
-      const [name, pts] = part.split(':').map(x=>x && x.trim());
-      return { name: name || '', pts: pts ? Number(pts) : 0 };
-    });
-  }
-
-  function renderGoleadores(matches){
-    const box = document.getElementById('goleadoresBox'); box.innerHTML = '';
-    const tally = {};
-    for (const m of matches){
-      const left = parseScorersField(m.goleadores_local);
-      const right = parseScorersField(m.goleadores_visita);
-      for (const s of [...left, ...right]){
-        if (!s.name) continue;
-        tally[s.name] = (tally[s.name] || 0) + (Number.isFinite(Number(s.pts)) ? Number(s.pts) : 0);
-      }
-    }
-    const arr = Object.keys(tally).map(n=>({ nombre:n, pts: tally[n] })).sort((a,b)=>b.pts - a.pts || a.nombre.localeCompare(b.nombre));
-    if (!arr.length) { box.innerHTML = '<div class="muted">Aún no hay datos de goleadores.</div>'; return; }
-    const table = document.createElement('table');
-    table.innerHTML = '<thead><tr><th>#</th><th>Jugador</th><th>Puntos</th></tr></thead>';
-    const tbody = document.createElement('tbody');
-    arr.forEach((r,i)=> {
-      const tr = document.createElement('tr'); tr.innerHTML = `<td style="width:40px">${i+1}</td><td>${r.nombre}</td><td style="text-align:right">${r.pts}</td>`;
-      tbody.appendChild(tr);
-    });
-    table.appendChild(tbody); box.appendChild(table);
   }
 
   function renderAll(matches){
     renderStandings(matches);
     renderFixture(matches);
     renderPlayoffs(matches);
-    renderGoleadores(matches);
   }
 
-  // initial: load saved URL and auto-update
+  // init: prioridad param -> localStorage -> DEFAULT_CSV
   (function init(){
-    const saved = loadSavedUrl();
-    if (saved) {
-      csvInput.value = saved;
-      // auto fetch once on load
-      fetchAndRender(saved);
+    const param = getCsvParam();
+    if (param){
+      let decoded = param;
+      try { decoded = decodeURIComponent(param); } catch(e){}
+      saveUrl(decoded);
+      fetchAndRender(decoded);
+    } else {
+      const s = loadSaved();
+      if (s) fetchAndRender(s);
+      else if (DEFAULT_CSV) { saveUrl(DEFAULT_CSV); fetchAndRender(DEFAULT_CSV); }
     }
   })();
 
-  // convenience: expose functions for debugging
-  window.torneo = { fetchAndRender, renderAll, parseCSV };
-
+  window.torneo = { fetchAndRender, renderAll };
 })();
 </script>
 </body>
